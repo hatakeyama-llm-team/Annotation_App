@@ -1,0 +1,44 @@
+import sqlite3
+from datetime import timezone, timedelta, datetime
+
+class EvaluateStatusRepository:
+    def __init__(self):
+        self.conn = sqlite3.connect('public.sqlite')
+        self.c = self.conn.cursor()
+
+    def __del__(self):
+        self.conn.close()
+
+    def insert(self,dataset_id:int,evaluation_point: int):
+        """
+        Insert a new record to evaluate_status table
+        テキストを評価する。
+        評価したテキストのstatusを'processed'に変更する。
+        :param dataset_id:
+        :param evaluation_point:
+        :return:
+        """
+        JST = timezone(timedelta(hours=+9), 'JST')
+        now = datetime.now(JST)
+        insert_statement = (f"INSERT INTO evaluate_status (dataset_id, evaluation_point,annotated_at)"
+        
+                            f" VALUES ('{dataset_id}', '{evaluation_point}','{now}')")
+        update_statement = (f"UPDATE datasets SET status = 'processed' WHERE id = '{dataset_id}'")
+        try:
+            self.c.execute(insert_statement)
+            self.c.execute(update_statement)
+        except Exception as e:
+            print(e)
+            if self.conn:
+                self.conn.rollback()
+        finally:
+            if self.conn:
+                self.conn.commit()
+
+
+    def findOneByDatasetId(self,dataset_id:int):
+        select_statement = (f"SELECT * FROM evaluate_status WHERE dataset_id = '{dataset_id}'")
+        self.c.execute(select_statement)
+        return self.c.fetchone()
+
+

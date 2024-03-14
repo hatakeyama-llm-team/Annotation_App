@@ -1,0 +1,4 @@
+/annotated_file/cc/segments*.json.gz
+.streamlit
+.idea/*
+process/__pycache__/*
