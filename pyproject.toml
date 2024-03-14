@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "annotation-app"
+version = "0.1.0"
+description = ""
+authors = ["Eiji Takahashi <comu2e@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
+streamlit = "^1.32.1"
+dataset = "^1.6.2"
+ja-sentence-segmenter = "^0.0.2"
+streamlit-shortcuts = "^0.1.1"
+streamlit-authenticator = "^0.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
