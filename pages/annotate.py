@@ -9,7 +9,7 @@ from repository.user_execute_count import UserExecuteRepository
 
 
 def show():
-    GOOD = "良さそう😁"
+    GOOD = "良い😁"
     PENDING = "判断に困る🙄"
     BAD = "良くない😇"
     #
