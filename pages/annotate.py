@@ -18,6 +18,8 @@ def show():
     BAD_POINT = 0
     # Set up the page layout
     dataset_repository = DataSetsRepository()
+    user_execute_repository = UserExecuteRepository()
+    evaluate_status_repository = EvaluateStatusRepository()
     try:
         dataset_id = dataset_repository.randomChoiseIdByUnprocessed()[0]
     except:
@@ -26,13 +28,17 @@ def show():
     dataset_id = dataset_repository.randomChoiseIdByUnprocessed()[0]
 
     user_name = ""
-    if 'user_info' in st.session_state:
-        user_name = st.session_state["user_info"]["name"]
-        st.title(f'{user_name}さん、こんにちは！')
-    evaluate_status_repository = EvaluateStatusRepository()
-    user_execute_repository = UserExecuteRepository()
 
-    fetched_user_processed_counts, fetched_all_counts,fetched_unprocessed_count = user_execute_repository.findCountByUserName(user_name)
+    if 'user_info' in st.session_state:
+        if st.session_state["user_info"] is not None:
+            user_name = st.session_state["user_info"]["name"]
+
+            st.title(f'{user_name}さん、こんにちは！')
+        else:
+            st.write(f'こんにちは！')
+    fetched_user_processed_counts, fetched_all_counts, fetched_unprocessed_count = user_execute_repository.findCountByUserName(
+            user_name)
+
     if fetched_user_processed_counts is None:
         fetched_user_processed_counts = 0
     if fetched_all_counts is None:
@@ -43,7 +49,6 @@ def show():
     user_count = st.session_state.setdefault('user_counts', fetched_user_processed_counts)
     all_count = st.session_state.setdefault('all_counts', fetched_all_counts)
     unprocessed_count = st.session_state.setdefault('unprocessed_counts', fetched_unprocessed_count)
-    #
     # Add a title to the page
     st.title("AnnotateApp")
     st.markdown(
@@ -62,7 +67,7 @@ def show():
     """,
         unsafe_allow_html=True,
     )
-    with st.expander("評価数の確認"):
+    with st.expander("評価数の確認", expanded=True):
         st.markdown(f"""
 
             すべてのデータセット数: {all_count}回
@@ -149,9 +154,9 @@ def show():
     with st.expander("Good,Pending,Badの定義"):
         st.markdown("""
                  Good/Badの例は以下の通りです。
-                    - Good: 　話の筋が良い表現や、科学的根拠に基づいた表現が含まれている。
-                    - Bad: R18の表現が含まれている、または、不適切な表現が含まれている。
-                    - Pending: 判断に迷う
+                    - 良い: 　話の筋が良い表現や、科学的根拠に基づいた表現が含まれている。文章の意味をなしていない。
+                    - 悪い: R18の表現が含まれている、または、不適切な表現が含まれている。
+                    - 判断に迷う: 定義に当てはまらない場合
 
                     3. 保存する
 
