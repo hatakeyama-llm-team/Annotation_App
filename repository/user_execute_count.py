@@ -51,7 +51,7 @@ class UserExecuteRepository:
         else:
             select_statement = (f"SELECT counts FROM user_counts WHERE user_name = '{user_name}'")
             self.c.execute(select_statement)
-            user_counts = self.c.fetchone()[0]
+            user_counts = self.c.fetchone()
         all_counts_statment = (f"SELECT COUNT(*) FROM datasets")
         self.c.execute(all_counts_statment)
         all_counts = self.c.fetchone()[0]

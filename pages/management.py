@@ -3,7 +3,6 @@ import streamlit as st
 from stqdm import stqdm
 
 from process.load_data import  list_cc_files, load_one_gz_data
-from process.segment import segment
 from repository.datasets import DataSetsRepository
 from repository.evaluate_status import EvaluateStatusRepository
 
@@ -11,7 +10,7 @@ from repository.evaluate_status import EvaluateStatusRepository
 def show():
     st.title("Management")
 
-    if st.button('warcファイルをsegement関数で句読点を分けて区切ったあとに、300文字のテキストとなるようデータセットを書き出す '):
+    if st.button('データセットをDBに登録する'):
         load_data_dir = "annotated_file/cc"
         list_cc_data_path = [load_data_dir + "/" + p for p in list_cc_files(load_data_dir)]
         dataset_repository = DataSetsRepository()
@@ -19,40 +18,12 @@ def show():
         for gz_path in stqdm(list_cc_data_path):
             try:
                 texts = load_one_gz_data(gz_path)
-                texts_segmented = segment(texts)
-                current_text = ""
-                for text in texts_segmented:
-                    if len(current_text) < 300:
-                        current_text += text
-                    elif len(current_text) >= 300:
-                        data = []
-                        data.append((current_text,'unprocessed',gz_path))
-                        dataset_repository.insertBatch(data)
-                        current_text = ""
 
-            except Exception as e:
-                st.write(gz_path)
-                print(e)
-                st.write("error")
-    if st.button('warcファイルを300文字区切りでとりあえず区切ってデータセットを書き出す'):
-        load_data_dir = "annotated_file/cc"
-        list_cc_data_path = [load_data_dir + "/" + p for p in list_cc_files(load_data_dir)]
-        dataset_repository = DataSetsRepository()
+                for i in range(len(texts)//300):
+                    data = []
+                    data.append((texts[i*300:(i+1)*300],'unprocessed',gz_path))
+                    dataset_repository.insertBatch(data)
 
-        for gz_path in stqdm(list_cc_data_path):
-            try:
-                texts = load_one_gz_data(gz_path)
-                # 句読点は無視して、とりあえず300文字で
-                # texts_segmented = segment(texts)
-                current_text = ""
-                for text in texts:
-                    if len(current_text) < 300:
-                        current_text += text
-                    elif len(current_text) >= 300:
-                        data = []
-                        data.append((current_text,'unprocessed',gz_path))
-                        dataset_repository.insertBatch(data)
-                        current_text = ""
 
             except Exception as e:
                 st.write(gz_path)

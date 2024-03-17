@@ -56,7 +56,7 @@
                         <mxRectangle width="70" height="40" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="135" value="evaluation_point" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" vertex="1" parent="133">
+                <mxCell id="135" value="evaluated_point" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" vertex="1" parent="133">
                     <mxGeometry x="70" width="175" height="40" as="geometry">
                         <mxRectangle width="175" height="40" as="alternateBounds"/>
                     </mxGeometry>

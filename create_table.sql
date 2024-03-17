@@ -12,8 +12,9 @@ CREATE TABLE annotated_datasets (
 CREATE TABLE evaluate_status (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     annotated_at DATE,
-    evaluation_point INT,
+    evaluated_point INT,
     dataset_id INT,
+    evaluation_text_category TEXT,
     FOREIGN KEY (dataset_id) REFERENCES Datasets(id)
 );
 CREATE TABLE user_counts (
@@ -21,4 +22,11 @@ CREATE TABLE user_counts (
     user_name TEXT,
     counts INT,
     annotated_at DATE
+);
+
+CREATE TABLE users
+(
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_name TEXT,
+    password  TEXT
 );

@@ -1,23 +1,92 @@
 import streamlit as st
 import authenticate as authenticate
 from pages import management, annotate
+from repository.user import UserRepository
 
-authenticate.set_st_state_vars()
+# authenticate.set_st_state_vars()
 authenticate.set_style_login()
-if st.session_state["authenticated"]:
-	authenticate.button_logout()
-	try:
-		annotate.show()
-		user_name = st.session_state["user_info"]["name"]
-		if user_name == 'admin':
-			management.show()
-		else:
-			st.warning("管理者権限がありません")
 
-	except Exception as e:
-		st.error(f"エラーが発生しました: {e}")
-else:
-	st.markdown("## ログインあるいは新規登録をしてください")
-	authenticate.button_login()
-	# ユーザーの新規登録は未実装。とりあえずCognitoのSignInページに飛ばす
-	# authenticate.button_signup()
+MAIN_PAGE = 0
+LOGIN_PAGE = 1
+REGISTER_PAGE = 2
+MANAGEMENT_PAGE = 3
+ANNOTATION_PAGE = 4
+
+def init():
+
+    with st.expander("このアプリについて"):
+        st.markdown("""
+        CommonCrawlのデータを使って、テキストを評価するアプリです。
+                    """)
+    with st.expander("使い方"):
+        st.markdown("""
+                    1. テキストを読み込む
+                    2. 読んだ文章を評価する
+                    3. Good or Pending or Badを選択する
+                    4. 次の文章を読み込む
+
+                    """)
+
+
+    if st.button('ログインページへ'):
+        st.session_state["page_control"] = LOGIN_PAGE
+    elif st.button('登録ページへ'):
+        st.session_state["page_control"] = REGISTER_PAGE
+
+
+def login_page_show():
+    st.title('ログインページ')
+    user_name = st.text_input('ユーザー名')
+    password = st.text_input('パスワード',type='password')
+    if st.button('ログインする'):
+        st.session_state["page_control"] = 1
+        user_repository = UserRepository()
+        is_login = user_repository.login(user_name,password)
+        if is_login:
+            st.write("ログインしました")
+            st.session_state["user_info"] = {"name":user_name}
+            st.session_state['authenticated'] = True
+            st.session_state["page_control"] = ANNOTATION_PAGE
+            st.spinner("読み込み中")
+
+        else:
+            st.warning("ログインできませんでした")
+            st.session_state['authenticated'] = False
+
+def register_page_show():
+    st.title('登録ページ')
+    user_name = st.text_input('ユーザー名')
+    password = st.text_input('パスワード',type='password')
+    if st.button('登録する'):
+        st.write('You clicked the button')
+        st.session_state["user_info"] = {"name":user_name}
+        user_repository = UserRepository()
+        is_register = user_repository.register(user_name,password)
+        if is_register:
+            st.session_state["page_control"] = ANNOTATION_PAGE
+            st.write("登録しました")
+
+        else:
+            st.warning("登録できませんでした. 既に登録されているかもしれません。")
+            st.session_state['authenticated'] = False
+
+        st.spinner("読み込み中")
+
+if __name__ == "__main__":
+
+
+    if 'page_control' not in st.session_state:
+        st.session_state["page_control"] = MAIN_PAGE
+
+    if st.session_state["page_control"] == MAIN_PAGE:
+        init()
+
+    elif st.session_state["page_control"] == LOGIN_PAGE:
+        login_page_show()
+    elif st.session_state["page_control"] == REGISTER_PAGE:
+        register_page_show()
+
+    elif st.session_state["page_control"] == ANNOTATION_PAGE:
+        annotate.show()
+    elif st.session_state["page_control"] == MANAGEMENT_PAGE and st.session_state['user_info']['name'] == 'admin':
+        management.show()
