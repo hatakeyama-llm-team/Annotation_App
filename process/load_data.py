@@ -14,8 +14,6 @@ def _concat_records(tag_records: List[Tuple[str, str]]):
 
     concat_records =  ''.join([t[0] for t in tag_records if t[1] in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div']])
 
-    print(concat_records)
-
     return concat_records
 def load_data():
     load_data_dir = "annotated_file/cc"
@@ -46,7 +44,6 @@ def load_one_gz_data(gz_path:str):
                    'title': x['title'],
                    'timestamp': x['timestamp'],
                    'text': _concat_records(x['text'])})
-
     return next(iter(dataset['train']))['text']
 
 if __name__ == "__main__":

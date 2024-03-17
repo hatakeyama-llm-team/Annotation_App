@@ -10,6 +10,7 @@ class DataSetsRepository:
     def __del__(self):
         self.conn.close()
     def insertBatch(self, data):
+        print(f"{data} is inserted to datasets table")
         self.c.executemany('INSERT INTO datasets (text, status, gz_path) VALUES (?,?,?)', data)
         self.conn.commit()
 

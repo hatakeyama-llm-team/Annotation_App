@@ -40,5 +40,8 @@ class EvaluateStatusRepository:
         select_statement = (f"SELECT * FROM evaluate_status WHERE dataset_id = '{dataset_id}'")
         self.c.execute(select_statement)
         return self.c.fetchone()
-
+    def exportAll(self):
+        select_statement = (f"SELECT * FROM evaluate_status left join datasets on evaluate_status.dataset_id = datasets.id")
+        self.c.execute(select_statement)
+        return self.c.fetchall()
 
