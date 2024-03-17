@@ -50,7 +50,7 @@ def show():
     all_count = st.session_state.setdefault('all_counts', fetched_all_counts)
     unprocessed_count = st.session_state.setdefault('unprocessed_counts', fetched_unprocessed_count)
     # Add a title to the page
-    st.title("AnnotateApp")
+    st.title("Annotation App")
     st.markdown(
         """
     <style>
@@ -153,12 +153,10 @@ def show():
                     """)
     with st.expander("Good,Pending,Badの定義"):
         st.markdown("""
-                 Good/Badの例は以下の通りです。
+                 良い/悪い/判断に迷うの例は以下の通りです。
                     - 良い: 　話の筋が良い表現や、科学的根拠に基づいた表現が含まれている。文章の意味をなしていない。
                     - 悪い: R18の表現が含まれている、または、不適切な表現が含まれている。
                     - 判断に迷う: 定義に当てはまらない場合
-
-                    3. 保存する
 
                     """)
 
