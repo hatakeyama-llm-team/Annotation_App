@@ -46,9 +46,13 @@ class UserExecuteRepository:
                     self.conn.commit()
     def findCountByUserName(self,user_name:str):
 
-        select_statement = (f"SELECT counts FROM user_counts WHERE user_name = '{user_name}'")
-        self.c.execute(select_statement)
-        user_counts = self.c.fetchone()[0]
+        if user_name is None:
+            user_counts = 0
+        else:
+            select_statement = (f"SELECT counts FROM user_counts WHERE user_name = '{user_name}'")
+            self.c.execute(select_statement)
+            user_counts = self.c.fetchone()[0]
+
         all_counts_statment = (f"SELECT COUNT(*) FROM datasets")
         self.c.execute(all_counts_statment)
         all_counts = self.c.fetchone()[0]
@@ -57,8 +61,6 @@ class UserExecuteRepository:
         self.c.execute(unprocessed_counts_statment)
         unprocessed_counts = self.c.fetchone()[0]
 
-        if user_counts is None:
-            user_counts = 0
         if all_counts is None:
             all_counts = 0
         if unprocessed_counts is None:

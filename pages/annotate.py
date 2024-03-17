@@ -25,10 +25,10 @@ def show():
         st.stop()
     dataset_id = dataset_repository.randomChoiseIdByUnprocessed()[0]
 
-    user_name = None
+    user_name = ""
     if 'user_info' in st.session_state:
-        st.title(f'{st.session_state["user_info"]["name"] }さん、こんにちは！')
         user_name = st.session_state["user_info"]["name"]
+        st.title(f'{user_name}さん、こんにちは！')
     evaluate_status_repository = EvaluateStatusRepository()
     user_execute_repository = UserExecuteRepository()
 
