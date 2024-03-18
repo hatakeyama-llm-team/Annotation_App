@@ -14,7 +14,7 @@ CREATE TABLE evaluate_status (
     annotated_at DATE,
     evaluated_point INT,
     dataset_id INT,
-    evaluation_text_category TEXT,
+    evaluated_text_category TEXT,
     FOREIGN KEY (dataset_id) REFERENCES Datasets(id)
 );
 CREATE TABLE user_counts (

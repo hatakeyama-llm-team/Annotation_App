@@ -51,9 +51,10 @@ class UserExecuteRepository:
         else:
             select_statement = (f"SELECT counts FROM user_counts WHERE user_name = '{user_name}'")
             self.c.execute(select_statement)
-            user_counts = self.c.fetchone()
-        all_counts_statment = (f"SELECT COUNT(*) FROM datasets")
-        self.c.execute(all_counts_statment)
+            user_counts = self.c.fetchone()[0]
+
+        all_counts_statement = (f"SELECT COUNT(*) FROM datasets")
+        self.c.execute(all_counts_statement)
         all_counts = self.c.fetchone()[0]
 
         unprocessed_counts_statment = (f"SELECT COUNT(*) FROM datasets WHERE status = 'unprocessed'")

@@ -52,6 +52,14 @@ def show():
     unprocessed_count = st.session_state.setdefault('unprocessed_counts', fetched_unprocessed_count)
     # Add a title to the page
     st.title("Annotation App")
+    with st.expander("使い方"):
+        st.markdown(f"""
+                     1. テキストを読み込む
+                     2. 読んだ文章を評価する
+                     3. {GOOD}/{PENDING}/{BAD}のいずれかを選択する
+                     4. 次の文章を読み込む
+
+                     """)
     st.markdown(
         """
     <style>
@@ -85,23 +93,25 @@ def show():
                     f'この文章を読んで評価してください'
                     )
         st.markdown(f"""
-        # ヘッダー
+        **ヘッダー**
                 
          {dataset_text[0][:100]}
         
-        # 内容
+        **内容**
         
-        {dataset_text[0][101:200]}
+        {dataset_text[0][100:200]}
         
         
-        # フッター
+        **フッター**
         
-        {dataset_text[0][201:300]}
+        {dataset_text[0][200:300]}
         
         """)
-    with st.expander("内容を読んで日本語として文章が成り立っていますか？"):
+    with st.expander("Q.1：内容を読んで日本語として文章が成り立っていますか？"):
         st.markdown("""
         この文章を読んで、日本語として文章が成り立っているかどうかを評価してください。
+        
+        ヘッダーの文章と内容の文章、フッターの文章をつなげて読んでください。
         
         - 支離滅裂な文章や、意味が通じない文章は「文章が成立していない」に評価してください。
         
@@ -132,7 +142,7 @@ def show():
                 user_execute_repository.upsert(user_name)
                 user_count += 1
                 unprocessed_count -= 1
-
+                evaluate_status_repository.insert(dataset_id, GOOD_POINT,"")
     with col2:
 
         if st.button(PENDING,
@@ -142,6 +152,8 @@ def show():
                 user_execute_repository.upsert(user_name)
                 user_count += 1
                 unprocessed_count -= 1
+                evaluate_status_repository.insert(dataset_id, PENDING_POINT,"")
+
     with col3:
 
         if st.button(BAD):
@@ -149,6 +161,8 @@ def show():
             if user_name is not None:
                 user_count += 1
                 unprocessed_count -= 1
+                evaluate_status_repository.insert(dataset_id, BAD_POINT,"")
+
 
         with st.expander("便利なショートカットキー"):
             st.markdown(f"""
@@ -194,10 +208,9 @@ def show():
      8. **倫理学**: 倫理的な問題、道徳哲学、応用倫理学（ビジネス倫理、環境倫理など）に関する理論や議論。
              """)
     evaluated_text_category = st.radio("カテゴリの分類", ("コーディング","STEM","ライティング技術",'人文学'), horizontal=True)
-
-    if st.button("評価する"):
-        evaluate_status_repository.insert(dataset_id, GOOD_POINT, evaluated_text_category)
-
+    #
+    # if st.button("評価する"):
+    #
 
     st.session_state['user_counts'] = user_count
     st.session_state['all_counts'] = all_count

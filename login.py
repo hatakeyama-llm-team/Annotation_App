@@ -13,19 +13,11 @@ MANAGEMENT_PAGE = 3
 ANNOTATION_PAGE = 4
 
 def init():
+    st.markdown("""
+      テキストを手軽にアノテーションして品質向上するためのアプリです
+                """)
 
-    with st.expander("このアプリについて"):
-        st.markdown("""
-        CommonCrawlのデータを使って、テキストを評価するアプリです。
-                    """)
-    with st.expander("使い方"):
-        st.markdown("""
-                    1. テキストを読み込む
-                    2. 読んだ文章を評価する
-                    3. Good or Pending or Badを選択する
-                    4. 次の文章を読み込む
 
-                    """)
 
 
     if st.button('ログインページへ'):
