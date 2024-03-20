@@ -1,6 +1,9 @@
 import sqlite3
 from datetime import timezone, timedelta, datetime
 
+import streamlit
+
+
 class UserExecuteRepository:
     def __init__(self):
         self.conn = sqlite3.connect('public.sqlite')
@@ -50,8 +53,12 @@ class UserExecuteRepository:
             user_counts = 0
         else:
             select_statement = (f"SELECT counts FROM user_counts WHERE user_name = '{user_name}'")
-            self.c.execute(select_statement)
-            user_counts = self.c.fetchone()[0]
+            fetched_data = self.c.execute(select_statement).fetchone()
+
+            if fetched_data is not None:
+                user_counts = fetched_data[0]
+            else:
+                user_counts = 0
 
         all_counts_statement = (f"SELECT COUNT(*) FROM datasets")
         self.c.execute(all_counts_statement)
