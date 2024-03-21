@@ -2,15 +2,10 @@ import streamlit as st
 import authenticate as authenticate
 from pages import management, annotate
 from repository.user import UserRepository
+from utils import Constants
 
 # authenticate.set_st_state_vars()
-authenticate.set_style_login()
 
-MAIN_PAGE = 0
-LOGIN_PAGE = 1
-REGISTER_PAGE = 2
-MANAGEMENT_PAGE = 3
-ANNOTATION_PAGE = 4
 
 def init():
     st.markdown("""
@@ -21,9 +16,9 @@ def init():
 
 
     if st.button('ログインページへ'):
-        st.session_state["page_control"] = LOGIN_PAGE
+        st.session_state["page_control"] = Constants.LOGIN_PAGE
     elif st.button('登録ページへ'):
-        st.session_state["page_control"] = REGISTER_PAGE
+        st.session_state["page_control"] = Constants.REGISTER_PAGE
 
 
 def login_page_show():
@@ -38,9 +33,8 @@ def login_page_show():
             st.write("ログインしました")
             st.session_state["user_info"] = {"name":user_name}
             st.session_state['authenticated'] = True
-            st.session_state["page_control"] = ANNOTATION_PAGE
+            st.session_state["page_control"] = Constants.ANNOTATION_PAGE
             st.spinner("読み込み中")
-
         else:
             st.warning("ログインできませんでした")
             st.session_state['authenticated'] = False
@@ -55,7 +49,7 @@ def register_page_show():
         user_repository = UserRepository()
         is_register = user_repository.register(user_name,password)
         if is_register:
-            st.session_state["page_control"] = ANNOTATION_PAGE
+            st.session_state["page_control"] = Constants.ANNOTATION_PAGE
             st.write("登録しました")
 
         else:
@@ -65,20 +59,21 @@ def register_page_show():
         st.spinner("読み込み中")
 
 if __name__ == "__main__":
-
+    st.set_page_config(page_title="アノテーションアプリ", page_icon="🐲", layout="wide",
+                       )
 
     if 'page_control' not in st.session_state:
-        st.session_state["page_control"] = MAIN_PAGE
+        st.session_state["page_control"] = Constants.MAIN_PAGE
 
-    if st.session_state["page_control"] == MAIN_PAGE:
+    if st.session_state["page_control"] == Constants.MAIN_PAGE:
         init()
 
-    elif st.session_state["page_control"] == LOGIN_PAGE:
+    elif st.session_state["page_control"] == Constants.LOGIN_PAGE:
         login_page_show()
-    elif st.session_state["page_control"] == REGISTER_PAGE:
+    elif st.session_state["page_control"] == Constants.REGISTER_PAGE:
         register_page_show()
 
-    elif st.session_state["page_control"] == ANNOTATION_PAGE:
-        annotate.show()
-    elif st.session_state["page_control"] == MANAGEMENT_PAGE and st.session_state['user_info']['name'] == 'admin':
+    elif st.session_state["page_control"] == Constants.ANNOTATION_PAGE:
+        annotate.main()
+    elif st.session_state["page_control"] == Constants.MANAGEMENT_PAGE and st.session_state['user_info']['name'] == 'admin':
         management.show()
