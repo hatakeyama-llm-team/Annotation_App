@@ -1,10 +1,5 @@
 import pandas as pd
 import streamlit as st
-from stqdm import stqdm
-
-from process.cleaner.auto_cleaner import clean_text
-from process.load_data import list_cc_files, load_one_gz_data
-from repository.datasets import DataSetsRepository
 from repository.evaluate_status import EvaluateStatusRepository
 
 
@@ -59,7 +54,7 @@ def show():
     def export_dataset():
         evaluateStatus = EvaluateStatusRepository()
         df = pd.DataFrame(evaluateStatus.exportAll(),
-                          columns=['dataset_id', 'evaluated_point', 'annotated_text', 'text_category']).to_csv()
+                          columns=['dataset_id', 'evaluated_point', 'annotated_text', 'feedback_text','text_category']).to_csv()
         file = df.encode('utf-8')
         return file
 

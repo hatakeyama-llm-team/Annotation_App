@@ -10,3 +10,4 @@ datasets
 MeCab
 hojichar
 streamlit_tags
+streamlit_shortcuts
