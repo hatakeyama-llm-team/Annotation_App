@@ -7,3 +7,5 @@ streamlit-authenticator
 boto3
 stqdm
 datasets
+MeCab
+hojichar
