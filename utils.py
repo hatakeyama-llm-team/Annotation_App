@@ -1,7 +1,7 @@
 # utils.py
 class Constants:
     GOOD = "文章が成立している😁"
-    PENDING = "判断に困る🙄"
+    PENDING = "部分的に文章が成立している🙄"
     BAD = "文章が成立していない😇"
     GOOD_POINT = 100
     PENDING_POINT = 50

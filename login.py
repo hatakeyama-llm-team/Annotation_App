@@ -1,19 +1,15 @@
 import streamlit as st
-import authenticate as authenticate
-from pages import management, annotate
+
+from pages import annotate, management
 from repository.user import UserRepository
 from utils import Constants
 
-# authenticate.set_st_state_vars()
 
 
 def init():
     st.markdown("""
       テキストを手軽にアノテーションして品質向上するためのアプリです
                 """)
-
-
-
 
     if st.button('ログインページへ'):
         st.session_state["page_control"] = Constants.LOGIN_PAGE
@@ -44,7 +40,6 @@ def register_page_show():
     user_name = st.text_input('ユーザー名')
     password = st.text_input('パスワード',type='password')
     if st.button('登録する'):
-        st.write('You clicked the button')
         st.session_state["user_info"] = {"name":user_name}
         user_repository = UserRepository()
         is_register = user_repository.register(user_name,password)
@@ -58,7 +53,7 @@ def register_page_show():
 
         st.spinner("読み込み中")
 
-if __name__ == "__main__":
+def main():
     st.set_page_config(page_title="アノテーションアプリ", page_icon="🐲", layout="wide",
                        )
 
@@ -77,3 +72,6 @@ if __name__ == "__main__":
         annotate.main()
     elif st.session_state["page_control"] == Constants.MANAGEMENT_PAGE and st.session_state['user_info']['name'] == 'admin':
         management.show()
+
+if __name__ == "__main__":
+    main()

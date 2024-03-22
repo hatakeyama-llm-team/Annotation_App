@@ -3,6 +3,8 @@ import datasets
 from typing import List, Tuple
 import os
 
+import pandas as pd
+
 
 def list_cc_files(dir_path: str) -> List[str]:
     return [f for f in os.listdir(dir_path) if f.endswith('.json.gz')]
@@ -45,6 +47,9 @@ def load_one_gz_data(gz_path:str):
                    'timestamp': x['timestamp'],
                    'text': _concat_records(x['text'])})
     return next(iter(dataset['train']))['text']
+def load_one_jsonl_data(jsonl_path:str):
+    jsonl_data = pd.read_json(jsonl_path, lines=True)
+    return jsonl_data['text']
 
 if __name__ == "__main__":
     load_data()

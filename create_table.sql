@@ -1,6 +1,7 @@
 CREATE TABLE datasets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    text TEXT,
+    original_text TEXT,
+    cleaned_text TEXT,
     status VARCHAR(255),
     gz_path TEXT
 );
