@@ -9,7 +9,7 @@ class EvaluateStatusRepository:
     def __del__(self):
         self.conn.close()
 
-    def insert(self,dataset_id:int,evaluated_point: int,evaluated_text_category:str):
+    def insert(self,dataset_id:int,evaluated_point: int,feedback_text,evaluated_text_category:str):
         """
         Insert a new record to evaluate_status table
         テキストを評価する。
@@ -20,9 +20,9 @@ class EvaluateStatusRepository:
         """
         JST = timezone(timedelta(hours=+9), 'JST')
         now = datetime.now(JST)
-        insert_statement = (f"INSERT INTO evaluate_status (dataset_id, evaluated_point,evaluated_text_category,annotated_at)"
+        insert_statement = (f"INSERT INTO evaluate_status (dataset_id, evaluated_point,feedback_text,evaluated_text_category,annotated_at)"
         
-                            f" VALUES ('{dataset_id}', '{evaluated_point}','{evaluated_text_category}','{now}')")
+                            f" VALUES ('{dataset_id}', '{evaluated_point}','{feedback_text}','{evaluated_text_category}','{now}')")
         update_statement = (f"UPDATE datasets SET status = 'processed' WHERE id = '{dataset_id}'")
         try:
             self.c.execute(insert_statement)

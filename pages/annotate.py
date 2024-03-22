@@ -83,16 +83,13 @@ def show_evaluation_buttons():
     with col3:
         if st.button(Constants.BAD):
             evaluate_point = Constants.BAD_POINT
-    if evaluate_point is None:
-        st.warning("評価を選択してください")
     st.session_state['evaluate_point'] = evaluate_point
 
 
 
 def submit_feedback( user_execute_repository, evaluate_status_repository):
-    is_submit = st.button('修正した文章と評価を送信する')
 
-    if is_submit:
+    if st.session_state.get('is_submit'):
         fetch_dataset(st.session_state.get('dataset_id'), st.session_state.get('dataset_text'))
 
         dataset_repository = DataSetsRepository()
@@ -105,7 +102,9 @@ def submit_feedback( user_execute_repository, evaluate_status_repository):
         st.session_state['unprocessed_counts'] -= 1
         evaluate_status_repository.insert(st.session_state.get('dataset_id'),
                                           st.session_state.get('evaluate_point'),
-                                          st.session_state.get('feedback_text'))
+                                          st.session_state.get('feedback_text'),
+                                          ''
+                                        ),
         user_execute_repository.upsert(st.session_state.get('user_name'))
 
         st.success("修正した文章と評価を送信しました！")
@@ -139,6 +138,8 @@ def main():
 
     show_evaluation_buttons()
     form = st.form(key='my_form')
+    is_submit = form.form_submit_button('送信')
+    st.session_state['is_submit'] = is_submit
     form_field_with_placeholder(form, "修正した文章")
     submit_feedback(user_execute_repository, evaluate_status_repository)
 

@@ -14,6 +14,7 @@ CREATE TABLE evaluate_status (
     annotated_at DATE,
     evaluated_point INT,
     dataset_id INT,
+    feedback_text TEXT,
     evaluated_text_category TEXT,
     FOREIGN KEY (dataset_id) REFERENCES Datasets(id)
 );
