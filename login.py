@@ -55,6 +55,7 @@ def register_page_show():
 
 def main():
     st.set_page_config(page_title="アノテーションアプリ", page_icon="🐲", layout="wide",
+                          initial_sidebar_state="auto"
                        )
 
     if 'page_control' not in st.session_state:

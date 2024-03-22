@@ -96,21 +96,34 @@ def form_field_with_placeholder( label ):
 def show_evaluation_buttons():
     col1,col2, col3 = st.columns(3)
     with col1:
-        if st.button(Constants.GOOD):
+        if st.button(Constants.GOOD,on_click=handle_evaluation_callback):
             evaluate_point = Constants.GOOD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
+            st.success('↑')
     with col2:
-        if st.button(Constants.PENDING):
+        if st.button(Constants.PENDING,on_click=handle_evaluation_callback):
             evaluate_point = Constants.PENDING_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
+            st.success('↑')
+
     with col3:
-        if st.button(Constants.BAD):
+        if st.button(Constants.BAD,on_click=handle_evaluation_callback):
             evaluate_point = Constants.BAD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
+            st.success('↑')
 
+from streamlit_shortcuts import add_keyboard_shortcuts
+
+
+def handle_evaluation_callback():
+    st.session_state['q1_answered'] = True
+def add_shortcut():
+    add_keyboard_shortcuts({'Shift+A': Constants.GOOD})
+    add_keyboard_shortcuts({'Shift+S':Constants.PENDING})
+    add_keyboard_shortcuts({'Shift+D':Constants.BAD})
 
 def submit_feedback():
     user_execute_repository = UserExecuteRepository()
@@ -160,7 +173,7 @@ def main():
         return
     set_styling()
     initialize_session_state()
-
+    add_shortcut()
     display_sidebar()
 
     display_instructions()
