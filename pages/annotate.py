@@ -5,7 +5,7 @@ from process.auth import check_auth
 from repository.datasets import DataSetsRepository
 from repository.user_execute_count import UserExecuteRepository
 from repository.evaluate_status import EvaluateStatusRepository
-from utils import Constants  # GOOD, PENDING, BAD などの定数を含む外部ファイル
+from utils import Constants, v_spacer  # GOOD, PENDING, BAD などの定数を含む外部ファイル
 from streamlit_shortcuts import add_keyboard_shortcuts
 def fetch_dataset(dataset_id, dataset_text):
     try:
@@ -62,7 +62,7 @@ def display_instructions():
         st.sidebar.markdown(Constants.INSTRUCTIONS)
 
 def evaluate_text():
-    with st.expander("### Q1.次の文章を読んで評価してください", expanded=False):
+    with st.expander("### Q1.次の文章を読んで評価してください(必須)", expanded=False):
         st.markdown(f'''
             【定義】
             1. **ヘッダー**：文章の冒頭部分。文章の0文字目から100文字目までの部分
@@ -73,15 +73,20 @@ def evaluate_text():
             
             次の評価基準に従って評価してください。
             
-            1. {Constants.GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしている場合
-            2. {Constants.PENDING}：ヘッダー、内容、フッターのうち、１つまたは２つ意味をなしているかどうか不明な場合
-            3. {Constants.BAD}：ヘッダー、内容、フッターをつなげた文章が意味をなしていない場合
+            1. {Constants.VERY_GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしていて、内容も良い場合
+            2. {Constants.GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしている場合
+            3. {Constants.PENDING_1}：ヘッダー、内容、フッターのうち、２つ意味をなしている場合
+            4. {Constants.PENDING_2}：ヘッダー、内容、フッターのうち、１つ意味をなしている場合
+            5. {Constants.BAD}：ヘッダー、内容、フッターをつなげた文章が意味をなしていない場合
             
             ''')
 
     st.markdown(f"**ヘッダー**\n\n{st.session_state.get('dataset_text')[:100]}\n\n**内容**\n"
                 f"\n{st.session_state.get('dataset_text')[100:200]}\n"
                 f"\n**フッター**\n\n{st.session_state.get('dataset_text')[200:300]}")
+
+    if st.session_state.get('q1_answered') == False:
+        st.warning('Q1の回答をお願いします')
 
 
 def handle_evaluation(evaluation_point):
@@ -94,38 +99,51 @@ def form_field_with_placeholder( label ):
         ''')
     feedback_text = st.text_area(label, value=st.session_state.get('dataset_text'), key=label,height=220)
     st.session_state['feedback_text'] = feedback_text
+    st.markdown('---')
 
 
 def show_evaluation_buttons():
-    col1,col2, col3 = st.columns(3)
+    col1,col2, col3,col4,col5 = st.columns(5)
     with col1:
+        if st.button(Constants.VERY_GOOD,on_click=handle_evaluation_callback):
+            evaluate_point = Constants.VERY_GOOD_POINT
+            st.session_state['q1_answered'] = True
+            handle_evaluation(evaluate_point)
+            st.success('↑')
+    with col2:
         if st.button(Constants.GOOD,on_click=handle_evaluation_callback):
             evaluate_point = Constants.GOOD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
-    with col2:
-        if st.button(Constants.PENDING,on_click=handle_evaluation_callback):
-            evaluate_point = Constants.PENDING_POINT
+    with col3:
+        if st.button(Constants.PENDING_1,on_click=handle_evaluation_callback):
+            evaluate_point = Constants.PENDING_POINT_1
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
-
-    with col3:
+    with col4:
+        if st.button(Constants.PENDING_2,on_click=handle_evaluation_callback):
+            evaluate_point = Constants.PENDING_POINT_2
+            st.session_state['q1_answered'] = True
+            handle_evaluation(evaluate_point)
+            st.success('↑')
+    with col5:
         if st.button(Constants.BAD,on_click=handle_evaluation_callback):
             evaluate_point = Constants.BAD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
-
-
+    st.markdown('---')
 
 def handle_evaluation_callback():
     st.session_state['q1_answered'] = True
 def add_shortcut():
-    add_keyboard_shortcuts({'Shift+A': Constants.GOOD})
-    add_keyboard_shortcuts({'Shift+S':Constants.PENDING})
-    add_keyboard_shortcuts({'Shift+D':Constants.BAD})
+    add_keyboard_shortcuts({'Shift+A': Constants.VERY_GOOD})
+    add_keyboard_shortcuts({'Shift+S': Constants.GOOD})
+    add_keyboard_shortcuts({'Shift+D':Constants.PENDING_1})
+    add_keyboard_shortcuts({'Shift+C':Constants.PENDING_2})
+    add_keyboard_shortcuts({'Shift+E':Constants.BAD})
 
 def submit_feedback():
     user_execute_repository = UserExecuteRepository()
@@ -149,11 +167,6 @@ def submit_feedback():
         st.write('回答ありがとうございます！')
         initialize_session_state()
 
-
-
-    else:
-        if st.session_state.get('q1_answered') == False:
-            st.warning('Q1が未回答です。Q1に回答お願いします')
 
 
 
@@ -182,6 +195,7 @@ def evaluate_text_category():
          ),
         placeholder='',
     )
+    st.markdown('---')
 
 def main():
     if not check_auth():
@@ -194,7 +208,6 @@ def main():
 
     display_instructions()
     evaluate_text()
-
     show_evaluation_buttons()
     form_field_with_placeholder("修正した文章")
     evaluate_text_category()

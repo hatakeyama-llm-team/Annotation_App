@@ -1,10 +1,17 @@
 # utils.py
+from turtle import st
+
+
 class Constants:
+    VERY_GOOD = "内容の良い文章🐲"
     GOOD = "文章が成立している😁"
-    PENDING = "部分的に文章が成立している🙄"
-    BAD = "文章が成立していない😇"
+    PENDING_1 = "2箇所のみ成立している🙄"
+    PENDING_2 = "1箇所のみ成立している🙄"
+    BAD = "文章として不完全😇"
+    VERY_GOOD_POINT = 100
     GOOD_POINT = 100
-    PENDING_POINT = 50
+    PENDING_POINT_2 = 75
+    PENDING_POINT_1 = 50
     BAD_POINT = 0
     INSTRUCTIONS = """
     # 評価の流れ
@@ -35,10 +42,12 @@ class Constants:
     SHORTCUTS = f"""
         # Q1回答で便利なショートカットキー
         ```
-        
-        - {GOOD}   : Shift+A
-        - {PENDING}: Shift+S
-        - {BAD}    : Shift+D
+    
+        - {VERY_GOOD}   : Shift+A
+        - {GOOD}   : Shift+S
+        - {PENDING_1}: Shift+D
+        - {PENDING_2}: Shift+C
+        - {BAD}    : Shift+E
          
          ```
         """
@@ -83,3 +92,11 @@ class Constants:
     REGISTER_PAGE = 2
     MANAGEMENT_PAGE = 3
     ANNOTATION_PAGE = 4
+def v_spacer(height, sb=False) -> None:
+    from streamlit import sidebar as st
+    for _ in range(height):
+        if sb:
+            st.sidebar.write('\n')
+        else:
+            st.write('\n')
+
