@@ -87,7 +87,6 @@ def form_field_with_placeholder( label ):
     with st.expander("Q2.次の文章を、意味をなす文章に修正して下さい", expanded=False):
         st.markdown(f'''
             意味をなす文章にしてください。
-            全く意味をなさない文章の場合：全選択して削除してください。
         ''')
     feedback_text = st.text_area(label, value=st.session_state.get('dataset_text'), key=label,height=220)
     st.session_state['feedback_text'] = feedback_text
