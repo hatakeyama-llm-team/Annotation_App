@@ -41,7 +41,7 @@ class EvaluateStatusRepository:
         self.c.execute(select_statement)
         return self.c.fetchone()
     def exportAll(self):
-        select_statement = (f"SELECT dataset_id,evaluated_point,text,evaluated_text_category FROM evaluate_status left join datasets on evaluate_status.dataset_id = datasets.id")
+        select_statement = (f"SELECT dataset_id,evaluated_point,cleaned_text,evaluated_text_category FROM evaluate_status left join datasets on evaluate_status.dataset_id = datasets.id")
         self.c.execute(select_statement)
         return self.c.fetchall()
 

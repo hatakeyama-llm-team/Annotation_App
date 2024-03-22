@@ -6,6 +6,7 @@ from repository.datasets import DataSetsRepository
 from repository.user_execute_count import UserExecuteRepository
 from repository.evaluate_status import EvaluateStatusRepository
 from utils import Constants  # GOOD, PENDING, BAD などの定数を含む外部ファイル
+from streamlit_shortcuts import add_keyboard_shortcuts
 def fetch_dataset(dataset_id, dataset_text):
     try:
         st.session_state['dataset_id'] = dataset_id
@@ -34,6 +35,8 @@ def initialize_session_state():
         st.session_state['q1_answered'] = False
     if 'is_submit' not in st.session_state:
         st.session_state['is_submit'] = False
+    if 'category' not in st.session_state:
+        st.session_state['category'] = ''
 def display_sidebar():
     user_info = st.session_state.get('user_info')
     st.sidebar.title(f"{user_info.get('name')}さん,こんにちは！")
@@ -53,6 +56,7 @@ def display_sidebar():
 
     with st.expander("便利なショートカットキー"):
         st.sidebar.markdown(Constants.SHORTCUTS)
+
 
 def display_instructions():
         st.sidebar.markdown(Constants.INSTRUCTIONS)
@@ -114,7 +118,6 @@ def show_evaluation_buttons():
             handle_evaluation(evaluate_point)
             st.success('↑')
 
-from streamlit_shortcuts import add_keyboard_shortcuts
 
 
 def handle_evaluation_callback():
@@ -135,12 +138,13 @@ def submit_feedback():
         evaluate_status_repository.insert(st.session_state.get('dataset_id'),
                                           st.session_state.get('evaluate_point'),
                                           st.session_state.get('feedback_text'),
-                                          ''
+                                          st.session_state.get('category'),
                                         ),
         user_execute_repository.upsert(st.session_state.get('user_name'))
         st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed()[0]
         st.session_state['dataset_text'] = dataset_repository.findOneById(st.session_state.get('dataset_id'))[0]
         st.session_state['q1_answered'] = False
+        st.session_state['category'] = ''
 
         st.write('回答ありがとうございます！')
         initialize_session_state()
@@ -166,6 +170,19 @@ def set_styling():
         unsafe_allow_html=True,
     )
 
+def evaluate_text_category():
+
+    with st.expander("Q3.文章のカテゴリを選んでください(任意）", expanded=False):
+        st.markdown(Constants.CATEGORY_INSTRUCTIONS)
+    st.session_state['category'] = st.selectbox(
+        'テキストのカテゴリを選んでください',
+        ('','広告', 'コーディング', 'テキスト抽出', '数学','ロールプレイ',
+         'STEM', 'ライティング技術', '人文学', '歴史', '哲学', '文学',
+         '芸術', '言語学', '文化人類学', '社会学', '宗教学', '倫理学'
+         ),
+        placeholder='',
+    )
+
 def main():
     if not check_auth():
         login_page_show()
@@ -180,6 +197,7 @@ def main():
 
     show_evaluation_buttons()
     form_field_with_placeholder("修正した文章")
+    evaluate_text_category()
     submit_feedback()
 
 if __name__ == "__main__":

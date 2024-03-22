@@ -1,19 +1,16 @@
 import streamlit as st
-
 from pages import annotate, management
 from repository.user import UserRepository
 from utils import Constants
-
-
 
 def init():
     st.markdown("""
       テキストを手軽にアノテーションして品質向上するためのアプリです
                 """)
 
-    if st.button('ログインページへ'):
-        st.session_state["page_control"] = Constants.LOGIN_PAGE
-    elif st.button('登録ページへ'):
+    login_page_show()
+
+    if st.button('登録ページへ'):
         st.session_state["page_control"] = Constants.REGISTER_PAGE
 
 
@@ -55,7 +52,7 @@ def register_page_show():
 
 def main():
     st.set_page_config(page_title="アノテーションアプリ", page_icon="🐲", layout="wide",
-                          initial_sidebar_state="auto"
+                          initial_sidebar_state="collapsed"
                        )
 
     if 'page_control' not in st.session_state:

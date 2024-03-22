@@ -25,6 +25,13 @@ CREATE TABLE user_counts (
     counts INT,
     annotated_at DATE
 );
+-- CREATE TABLE evaluate_status_category (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     evaluate_status_id INT,
+--     category_name TEXT,
+--     FOREIGN KEY (evaluate_status_id) REFERENCES evaluate_status(id)
+-- );
+
 
 CREATE TABLE users
 (

@@ -2,9 +2,8 @@ import pandas as pd
 import streamlit as st
 from stqdm import stqdm
 
-from process.cleaner.auto_cleaner import text_to_cleaned_paragraphs, clean_text
-from process.cleaner.hojichar_filter import hoji_filter
-from process.load_data import list_cc_files, load_one_gz_data, load_one_jsonl_data
+from process.cleaner.auto_cleaner import clean_text
+from process.load_data import list_cc_files, load_one_gz_data
 from repository.datasets import DataSetsRepository
 from repository.evaluate_status import EvaluateStatusRepository
 
@@ -12,30 +11,30 @@ from repository.evaluate_status import EvaluateStatusRepository
 
 def show():
     st.title("管理画面")
+    # if st.button('データセットをDBに登録する'):
+    #     load_data_dir = "annotated_file/cc"
+    #     list_cc_data_path = [load_data_dir + "/" + p for p in list_cc_files(load_data_dir)]
+    #     dataset_repository = DataSetsRepository()
+    #     print(list_cc_data_path)
+    #     for gz_path in stqdm(list_cc_data_path):
+    #         try:
+    #             original_texts = load_one_gz_data(gz_path)
+    #             cleaned_texts = clean_text(original_texts)
+    #             for i in range(len(cleaned_texts)//300):
+    #                 data = []
+    #                 original_text = cleaned_texts[i*300:(i+1)*300]
+    #                 cleaned_text = clean_text(original_text)
+    #                 if cleaned_text:
+    #                     data.append((cleaned_text,original_text,'unprocessed',gz_path))
+    #                     dataset_repository.insertBatch(data)
+    #                 else:
+    #                     pass
+    #
+    #         except Exception as e:
+    #             st.write(gz_path)
+    #             print(e)
+    #             st.write("error")
 
-    if st.button('データセットをDBに登録する'):
-        load_data_dir = "annotated_file/cc"
-        list_cc_data_path = [load_data_dir + "/" + p for p in list_cc_files(load_data_dir)]
-        dataset_repository = DataSetsRepository()
-        print(list_cc_data_path)
-        for gz_path in stqdm(list_cc_data_path):
-            try:
-                original_texts = load_one_gz_data(gz_path)
-                cleaned_texts = clean_text(original_texts)
-                for i in range(len(cleaned_texts)//300):
-                    data = []
-                    original_text = cleaned_texts[i*300:(i+1)*300]
-                    cleaned_text = clean_text(original_text)
-                    if cleaned_text:
-                        data.append((cleaned_text,original_text,'unprocessed',gz_path))
-                        dataset_repository.insertBatch(data)
-                    else:
-                        pass
-
-            except Exception as e:
-                st.write(gz_path)
-                print(e)
-                st.write("error")
     # if st.button('jsonlのデータをDBに登録する'):
     #     list_cc_data_path = [
     #         'annotated_file/cleaned_cc_hatakeyama/random_sample.jsonl',
@@ -57,12 +56,15 @@ def show():
     #             print(e)
     #             st.write("error")
 
-    if st.button('アノテーションしたすべてのデータセットを出力する'):
+    def export_dataset():
         evaluateStatus = EvaluateStatusRepository()
-        df = pd.DataFrame(evaluateStatus.exportAll()).to_csv()
+        df = pd.DataFrame(evaluateStatus.exportAll(),
+                          columns=['dataset_id', 'evaluated_point', 'annotated_text', 'text_category']).to_csv()
         file = df.encode('utf-8')
+        return file
 
-        st.download_button("exported.csv", data=file,mime="text/csv")
+    if st.button('アノテーションしたすべてのデータセットを出力する'):
+        st.download_button("annotation.csv", data=export_dataset(),mime="text/csv")
 
 if __name__ == "__main__":
     # if 'user_info' in st.session_state:

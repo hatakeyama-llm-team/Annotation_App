@@ -9,3 +9,4 @@ stqdm
 datasets
 MeCab
 hojichar
+streamlit_tags
