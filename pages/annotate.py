@@ -73,11 +73,22 @@ def evaluate_text():
             
             次の評価基準に従って評価してください。
             
-            1. {Constants.VERY_GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしていて、内容も良い場合
-            2. {Constants.GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしている場合
-            3. {Constants.PENDING_1}：ヘッダー、内容、フッターのうち、２つ意味をなしている場合
-            4. {Constants.PENDING_2}：ヘッダー、内容、フッターのうち、１つ意味をなしている場合
-            5. {Constants.BAD}：ヘッダー、内容、フッターをつなげた文章が意味をなしていない場合
+            1. {Constants.VERY_GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしていて、良いと思える内容の場合
+                
+                良い内容:　誰かがお金を払ってでも読みたそうな記事(解説、小説、インタビュー、ニュース、オリジナルな文章、辞書
+            
+            2. {Constants.GOOD}：ヘッダー、内容、フッター３つすべてをつなげた文章が意味をなしているが、普通の内容の場合
+                
+                普通 : 広告など、ありきたりな内容
+            
+            3. {Constants.PENDING}：ヘッダー、内容、フッターのうち、1,2つ意味をなしているが、普通の内容の場合
+                
+                普通 :　広告など、ありきたりな内容
+
+            4. {Constants.BAD}：ヘッダー、内容、フッターをつなげた文章が意味をなしていない場合あるいは、悪い内容の場合
+                
+                悪い:　公序良俗などに反する
+
             
             ''')
 
@@ -103,7 +114,7 @@ def form_field_with_placeholder( label ):
 
 
 def show_evaluation_buttons():
-    col1,col2, col3,col4,col5 = st.columns(5)
+    col1,col2, col3,col4 = st.columns(4)
     with col1:
         if st.button(Constants.VERY_GOOD,on_click=handle_evaluation_callback):
             evaluate_point = Constants.VERY_GOOD_POINT
@@ -117,18 +128,12 @@ def show_evaluation_buttons():
             handle_evaluation(evaluate_point)
             st.success('↑')
     with col3:
-        if st.button(Constants.PENDING_1,on_click=handle_evaluation_callback):
-            evaluate_point = Constants.PENDING_POINT_1
+        if st.button(Constants.PENDING,on_click=handle_evaluation_callback):
+            evaluate_point = Constants.PENDING_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
     with col4:
-        if st.button(Constants.PENDING_2,on_click=handle_evaluation_callback):
-            evaluate_point = Constants.PENDING_POINT_2
-            st.session_state['q1_answered'] = True
-            handle_evaluation(evaluate_point)
-            st.success('↑')
-    with col5:
         if st.button(Constants.BAD,on_click=handle_evaluation_callback):
             evaluate_point = Constants.BAD_POINT
             st.session_state['q1_answered'] = True
@@ -141,9 +146,8 @@ def handle_evaluation_callback():
 def add_shortcut():
     add_keyboard_shortcuts({'Shift+A': Constants.VERY_GOOD})
     add_keyboard_shortcuts({'Shift+S': Constants.GOOD})
-    add_keyboard_shortcuts({'Shift+D':Constants.PENDING_1})
-    add_keyboard_shortcuts({'Shift+C':Constants.PENDING_2})
-    add_keyboard_shortcuts({'Shift+E':Constants.BAD})
+    add_keyboard_shortcuts({'Shift+D':Constants.PENDING})
+    add_keyboard_shortcuts({'Shift+F':Constants.BAD})
 
 def submit_feedback():
     user_execute_repository = UserExecuteRepository()

@@ -8,7 +8,8 @@ WORKDIR /app
 
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app
 
-EXPOSE 8791
+EXPOSE 8080
 
-CMD ["streamlit", "run", "login.py", "--server.port", "8791"]
+CMD ["streamlit", "run", "login.py", "--server.port", "8080"]

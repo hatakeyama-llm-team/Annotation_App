@@ -4,14 +4,12 @@ from turtle import st
 
 class Constants:
     VERY_GOOD = "内容の良い文章🐲"
-    GOOD = "文章が成立している😁"
-    PENDING_1 = "2箇所のみ成立している🙄"
-    PENDING_2 = "1箇所のみ成立している🙄"
+    GOOD = "文章が完全に成立している😁"
+    PENDING = "1,2箇所のみ成立している🙄"
     BAD = "文章として不完全😇"
     VERY_GOOD_POINT = 100
-    GOOD_POINT = 100
-    PENDING_POINT_2 = 75
-    PENDING_POINT_1 = 50
+    GOOD_POINT = 75
+    PENDING_POINT = 50
     BAD_POINT = 0
     INSTRUCTIONS = """
     # 評価の流れ
@@ -45,9 +43,8 @@ class Constants:
     
         - {VERY_GOOD}   : Shift+A
         - {GOOD}   : Shift+S
-        - {PENDING_1}: Shift+D
-        - {PENDING_2}: Shift+C
-        - {BAD}    : Shift+E
+        - {PENDING}: Shift+D
+        - {BAD}    : Shift+F
          
          ```
         """

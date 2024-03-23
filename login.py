@@ -3,17 +3,6 @@ from pages import annotate, management
 from repository.user import UserRepository
 from utils import Constants
 
-def init():
-    st.markdown("""
-      テキストを手軽にアノテーションして品質向上するためのアプリです
-                """)
-
-    login_page_show()
-
-    if st.button('登録ページへ'):
-        st.session_state["page_control"] = Constants.REGISTER_PAGE
-
-
 def login_page_show():
     st.title('ログインページ')
     user_name = st.text_input('ユーザー名')
@@ -59,7 +48,14 @@ def main():
         st.session_state["page_control"] = Constants.MAIN_PAGE
 
     if st.session_state["page_control"] == Constants.MAIN_PAGE:
-        init()
+        st.markdown("""
+          テキストを手軽にアノテーションして品質向上するためのアプリです
+                    """)
+
+        login_page_show()
+
+        if st.button('登録ページへ'):
+            st.session_state["page_control"] = Constants.REGISTER_PAGE
 
     elif st.session_state["page_control"] == Constants.LOGIN_PAGE:
         login_page_show()

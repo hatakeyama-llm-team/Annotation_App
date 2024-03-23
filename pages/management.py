@@ -9,29 +9,29 @@ from stqdm import stqdm
 
 def show():
     st.title("管理画面")
-    if st.button('データセットをDBに登録する'):
-        load_data_dir = "annotated_file/takahashi_cc"
-        list_cc_data_path = [load_data_dir + "/" + p for p in list_cc_files(load_data_dir)]
-        dataset_repository = DataSetsRepository()
-        print(list_cc_data_path)
-        for gz_path in stqdm(list_cc_data_path):
-            try:
-                original_texts = load_one_gz_data(gz_path)
-                cleaned_texts = clean_text(original_texts)
-                for i in range(len(cleaned_texts)//300):
-                    data = []
-                    original_text = cleaned_texts[i*300:(i+1)*300]
-                    cleaned_text = clean_text(original_text)
-                    if cleaned_text:
-                        data.append((cleaned_text,original_text,'unprocessed',gz_path))
-                        dataset_repository.insertBatch(data)
-                    else:
-                        pass
-
-            except Exception as e:
-                st.write(gz_path)
-                print(e)
-                st.write("error")
+    # if st.button('データセットをDBに登録する'):
+    #     load_data_dir = "annotated_file/takahashi_cc"
+    #     list_cc_data_path = [load_data_dir + "/" + p for p in list_cc_files(load_data_dir)]
+    #     dataset_repository = DataSetsRepository()
+    #     print(list_cc_data_path)
+    #     for gz_path in stqdm(list_cc_data_path):
+    #         try:
+    #             original_texts = load_one_gz_data(gz_path)
+    #             cleaned_texts = clean_text(original_texts)
+    #             for i in range(len(cleaned_texts)//300):
+    #                 data = []
+    #                 original_text = cleaned_texts[i*300:(i+1)*300]
+    #                 cleaned_text = clean_text(original_text)
+    #                 if cleaned_text:
+    #                     data.append((cleaned_text,original_text,'unprocessed',gz_path))
+    #                     dataset_repository.insertBatch(data)
+    #                 else:
+    #                     pass
+    #
+    #         except Exception as e:
+    #             st.write(gz_path)
+    #             print(e)
+    #             st.write("error")
 
     # if st.button('jsonlのデータをDBに登録する'):
     #     list_cc_data_path = [
