@@ -187,13 +187,19 @@ def evaluate_text_category():
 
     with st.expander("Q3.文章のカテゴリを選んでください(任意）", expanded=False):
         st.markdown(Constants.CATEGORY_INSTRUCTIONS)
-    st.session_state['category'] = st.selectbox(
+    st.session_state['category'] = st.radio(
+
         'テキストのカテゴリを選んでください',
-        ('','広告', 'コーディング', 'テキスト抽出', '数学','ロールプレイ',
-         'STEM', 'ライティング技術', '人文学', '歴史', '哲学', '文学',
-         '芸術', '言語学', '文化人類学', '社会学', '宗教学', '倫理学'
+        (
+         '執筆',
+         'ロールプレイ',
+         'コーディング', 'テキスト抽出',
+         '推論','知識(人文学)',
+         '知識(自然科学)',
+         '知識(科学技術)',
+         '広告',
          ),
-        placeholder='',
+        horizontal=True
     )
     st.markdown('---')
 
