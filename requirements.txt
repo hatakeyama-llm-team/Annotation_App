@@ -7,7 +7,7 @@ streamlit-authenticator
 boto3
 stqdm
 datasets
-MeCab
+mecab
 hojichar
 streamlit_tags
 streamlit_shortcuts
