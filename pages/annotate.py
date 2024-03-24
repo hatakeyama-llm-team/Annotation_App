@@ -161,27 +161,32 @@ def add_shortcut():
     add_keyboard_shortcuts({'Shift+D': Constants.PENDING})
     add_keyboard_shortcuts({'Shift+F': Constants.BAD})
 
+def change_next_dataset():
+    st.session_state['user_counts'] += 1
+    st.session_state['unprocessed_counts'] -= 1
 
-def submit_feedback():
     user_execute_repository = UserExecuteRepository()
     evaluate_status_repository = EvaluateStatusRepository()
     dataset_repository = DataSetsRepository()
+    evaluate_status_repository.insert(st.session_state.get('dataset_id'),
+                                      st.session_state.get('evaluate_point'),
+                                      st.session_state.get('feedback_text'),
+                                      st.session_state.get('category'),
+                                      ),
+    user_execute_repository.upsert(st.session_state.get('user_name'))
+    st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed().id
+    st.session_state['dataset_text'] = (dataset_repository.
+                                        findOneById(st.session_state.get('dataset_id')).cleaned_text)
+    st.session_state['q1_answered'] = False
+    st.session_state['category'] = ''
 
-    if st.button('次の文章を評価する') and st.session_state['q1_answered']:
-        st.session_state['user_counts'] += 1
-        st.session_state['unprocessed_counts'] -= 1
-        evaluate_status_repository.insert(st.session_state.get('dataset_id'),
-                                          st.session_state.get('evaluate_point'),
-                                          st.session_state.get('feedback_text'),
-                                          st.session_state.get('category'),
-                                          ),
-        user_execute_repository.upsert(st.session_state.get('user_name'))
-        st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed().id
-        st.session_state['dataset_text'] = (dataset_repository.
-                                            findOneById(st.session_state.get('dataset_id')).cleaned_text)
-        st.session_state['q1_answered'] = False
-        st.session_state['category'] = ''
 
+def submit_feedback():
+
+    with st.form(key='submit_form'):
+        st.form_submit_button(
+            label='評価を送信する',on_click= change_next_dataset
+        )
         st.write('回答ありがとうございます！')
         initialize_session_state()
 
