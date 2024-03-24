@@ -3,10 +3,10 @@ from turtle import st
 
 
 class Constants:
-    VERY_GOOD = "内容の良い文章🐲"
-    GOOD = "文章が完全に成立している😁"
-    PENDING = "1,2箇所のみ成立している🙄"
-    BAD = "文章として不完全😇"
+    VERY_GOOD = "完全な文章、かつ、内容も良い文章🐲"
+    GOOD = "完全な文章、かつ＋普通の文章😅"
+    PENDING = "不完全な文章、かつ＋普通の文章🙄"
+    BAD = "不完全な文章、または、公序良俗などに反する😇"
     VERY_GOOD_POINT = 100
     GOOD_POINT = 75
     PENDING_POINT = 50

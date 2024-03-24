@@ -62,15 +62,6 @@ def show():
         st.download_button("annotation.csv", data=export_dataset(),mime="text/csv")
 
 if __name__ == "__main__":
-    # if 'user_info' in st.session_state:
-    #     user_name = st.session_state["user_info"]["name"]
-    #     if user_name == 'admin':
-    #         show()
-    #     else:
-    #         st.warning("管理者権限がありません")
-    # else:
-    #     user_name = ""
-    #     st.warning("管理者権限がありません")
     show()
 
 
