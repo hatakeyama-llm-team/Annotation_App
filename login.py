@@ -1,6 +1,8 @@
 import streamlit as st
+from dotenv import load_dotenv
+
 from pages import annotate, management
-from repository.user import UserRepository
+from repository.cloud_sql_mysql.user import UserRepository
 from utils import Constants
 
 def login_page_show():
@@ -40,6 +42,7 @@ def register_page_show():
         st.spinner("読み込み中")
 
 def main():
+    load_dotenv('.env')
     st.set_page_config(page_title="アノテーションアプリ", page_icon="🐲", layout="wide",
                           initial_sidebar_state="collapsed"
                        )

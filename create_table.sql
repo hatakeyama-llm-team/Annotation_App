@@ -5,11 +5,7 @@ CREATE TABLE datasets (
     status VARCHAR(255),
     gz_path TEXT
 );
-CREATE TABLE annotated_datasets (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    dataset_id INT,
-    FOREIGN KEY (dataset_id) REFERENCES Datasets(id)
-);
+
 CREATE TABLE evaluate_status (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     annotated_at DATE,
@@ -25,13 +21,6 @@ CREATE TABLE user_counts (
     counts INT,
     annotated_at DATE
 );
--- CREATE TABLE evaluate_status_category (
---     id INTEGER PRIMARY KEY AUTOINCREMENT,
---     evaluate_status_id INT,
---     category_name TEXT,
---     FOREIGN KEY (evaluate_status_id) REFERENCES evaluate_status(id)
--- );
-
 
 CREATE TABLE users
 (

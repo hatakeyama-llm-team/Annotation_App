@@ -2,41 +2,48 @@ import streamlit as st
 
 from login import login_page_show
 from process.auth import check_auth
-from repository.datasets import DataSetsRepository
-from repository.user_execute_count import UserExecuteRepository
-from repository.evaluate_status import EvaluateStatusRepository
-from utils import Constants, v_spacer  # GOOD, PENDING, BAD などの定数を含む外部ファイル
+from repository.cloud_sql_mysql.datasets import DataSetsRepository
+from repository.cloud_sql_mysql.user_execute_count import UserExecuteRepository
+from repository.cloud_sql_mysql.evaluate_status import EvaluateStatusRepository
+from utils import Constants  # GOOD, PENDING, BAD などの定数を含む外部ファイル
 from streamlit_shortcuts import add_keyboard_shortcuts
+
+
 def fetch_dataset(dataset_id, dataset_text):
     try:
         st.session_state['dataset_id'] = dataset_id
         st.session_state['dataset_text'] = dataset_text
     except IndexError:
         st.success("🎉全てのデータセットを評価しました！")
+
+
 def initialize_session_state():
     user_execute_repository = UserExecuteRepository()
     dataset_repository = DataSetsRepository()
     if 'user_counts' not in st.session_state:
         st.session_state['user_counts'] = \
-        user_execute_repository.findCountByUserName(st.session_state.get('user_name'))[0]
+            user_execute_repository.findCountByUserName(st.session_state.get('user_name'))[0]
     if 'all_counts' not in st.session_state:
         st.session_state['all_counts'] = (
             user_execute_repository.findCountByUserName(st.session_state.get('user_name')))[1]
     if 'unprocessed_counts' not in st.session_state:
-        st.session_state['unprocessed_counts'] = user_execute_repository.findCountByUserName(st.session_state.get('user_name'))[2]
+        st.session_state['unprocessed_counts'] = \
+        user_execute_repository.findCountByUserName(st.session_state.get('user_name'))[2]
 
     if 'evaluate_point' not in st.session_state:
         st.session_state['evaluate_point'] = 0
     if 'dataset_id' not in st.session_state:
-        st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed()[0]
+        st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed().id
     if 'dataset_text' not in st.session_state:
-        st.session_state['dataset_text'] = dataset_repository.findOneById(st.session_state.get('dataset_id'))[0]
+        st.session_state['dataset_text'] = dataset_repository.findOneById(st.session_state.get('dataset_id')).cleaned_text
     if 'q1_answered' not in st.session_state:
         st.session_state['q1_answered'] = False
     if 'is_submit' not in st.session_state:
         st.session_state['is_submit'] = False
     if 'category' not in st.session_state:
         st.session_state['category'] = ''
+
+
 def display_sidebar():
     user_info = st.session_state.get('user_info')
     st.sidebar.title(f"{user_info.get('name')}さん,こんにちは！")
@@ -59,7 +66,8 @@ def display_sidebar():
 
 
 def display_instructions():
-        st.sidebar.markdown(Constants.INSTRUCTIONS)
+    st.sidebar.markdown(Constants.INSTRUCTIONS)
+
 
 def evaluate_text():
     with st.expander("### Q1.次の文章を読んで評価してください(必須)", expanded=False):
@@ -103,51 +111,56 @@ def evaluate_text():
 def handle_evaluation(evaluation_point):
     st.session_state['evaluate_point'] = evaluation_point
 
-def form_field_with_placeholder( label ):
+
+def form_field_with_placeholder(label):
     with st.expander("Q2.次の文章を、意味をなす文章に修正して下さい", expanded=False):
         st.markdown(f'''
             意味をなす文章にしてください。
         ''')
-    feedback_text = st.text_area(label, value=st.session_state.get('dataset_text'), key=label,height=220)
+    feedback_text = st.text_area(label, value=st.session_state.get('dataset_text'), key=label, height=220)
     st.session_state['feedback_text'] = feedback_text
     st.markdown('---')
 
 
 def show_evaluation_buttons():
-    col1,col2, col3,col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        if st.button(Constants.VERY_GOOD,on_click=handle_evaluation_callback):
+        if st.button(Constants.VERY_GOOD, on_click=handle_evaluation_callback):
             evaluate_point = Constants.VERY_GOOD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
     with col2:
-        if st.button(Constants.GOOD,on_click=handle_evaluation_callback):
+        if st.button(Constants.GOOD, on_click=handle_evaluation_callback):
             evaluate_point = Constants.GOOD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
     with col3:
-        if st.button(Constants.PENDING,on_click=handle_evaluation_callback):
+        if st.button(Constants.PENDING, on_click=handle_evaluation_callback):
             evaluate_point = Constants.PENDING_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
     with col4:
-        if st.button(Constants.BAD,on_click=handle_evaluation_callback):
+        if st.button(Constants.BAD, on_click=handle_evaluation_callback):
             evaluate_point = Constants.BAD_POINT
             st.session_state['q1_answered'] = True
             handle_evaluation(evaluate_point)
             st.success('↑')
     st.markdown('---')
 
+
 def handle_evaluation_callback():
     st.session_state['q1_answered'] = True
+
+
 def add_shortcut():
     add_keyboard_shortcuts({'Shift+A': Constants.VERY_GOOD})
     add_keyboard_shortcuts({'Shift+S': Constants.GOOD})
-    add_keyboard_shortcuts({'Shift+D':Constants.PENDING})
-    add_keyboard_shortcuts({'Shift+F':Constants.BAD})
+    add_keyboard_shortcuts({'Shift+D': Constants.PENDING})
+    add_keyboard_shortcuts({'Shift+F': Constants.BAD})
+
 
 def submit_feedback():
     user_execute_repository = UserExecuteRepository()
@@ -161,18 +174,16 @@ def submit_feedback():
                                           st.session_state.get('evaluate_point'),
                                           st.session_state.get('feedback_text'),
                                           st.session_state.get('category'),
-                                        ),
+                                          ),
         user_execute_repository.upsert(st.session_state.get('user_name'))
-        st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed()[0]
-        st.session_state['dataset_text'] = dataset_repository.findOneById(st.session_state.get('dataset_id'))[0]
+        st.session_state['dataset_id'] = dataset_repository.randomChoiseIdByUnprocessed().id
+        st.session_state['dataset_text'] = (dataset_repository.
+                                            findOneById(st.session_state.get('dataset_id')).cleaned_text)
         st.session_state['q1_answered'] = False
         st.session_state['category'] = ''
 
         st.write('回答ありがとうございます！')
         initialize_session_state()
-
-
-
 
 
 def set_styling():
@@ -187,25 +198,26 @@ def set_styling():
         unsafe_allow_html=True,
     )
 
-def evaluate_text_category():
 
+def evaluate_text_category():
     with st.expander("Q3.文章のカテゴリを選んでください(任意）", expanded=False):
         st.markdown(Constants.CATEGORY_INSTRUCTIONS)
     st.session_state['category'] = st.radio(
 
         'テキストのカテゴリを選んでください',
         (
-         '執筆',
-         'ロールプレイ',
-         'コーディング', 'テキスト抽出',
-         '推論','知識(人文学)',
-         '知識(自然科学)',
-         '知識(科学技術)',
-         '広告',
-         ),
+            '執筆',
+            'ロールプレイ',
+            'コーディング', 'テキスト抽出',
+            '推論', '知識(人文学)',
+            '知識(自然科学)',
+            '知識(科学技術)',
+            '広告',
+        ),
         horizontal=True
     )
     st.markdown('---')
+
 
 def main():
     if not check_auth():
@@ -222,6 +234,7 @@ def main():
     form_field_with_placeholder("修正した文章")
     evaluate_text_category()
     submit_feedback()
+
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,7 @@
 import pandas as pd
 import streamlit as st
-from process.cleaner.auto_cleaner import clean_text
-from process.load_data import load_one_gz_data, list_cc_files
-from repository.datasets import DataSetsRepository
-from repository.evaluate_status import EvaluateStatusRepository
-from stqdm import stqdm
+
+from repository.cloud_sql_mysql.evaluate_status import EvaluateStatusRepository
 
 
 def show():
