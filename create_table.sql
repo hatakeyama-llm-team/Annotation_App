@@ -1,0 +1,30 @@
+CREATE TABLE datasets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_text TEXT,
+    cleaned_text TEXT,
+    status VARCHAR(255),
+    gz_path TEXT
+);
+
+CREATE TABLE evaluate_status (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    annotated_at DATE,
+    evaluated_point INT,
+    dataset_id INT,
+    feedback_text TEXT,
+    evaluated_text_category TEXT,
+    FOREIGN KEY (dataset_id) REFERENCES Datasets(id)
+);
+CREATE TABLE user_counts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_name TEXT,
+    counts INT,
+    annotated_at DATE
+);
+
+CREATE TABLE users
+(
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_name TEXT,
+    password  TEXT
+);

@@ -1,0 +1,13 @@
+
+streamlit
+dataset
+ja-sentence-segmenter
+streamlit-shortcuts
+streamlit-authenticator
+boto3
+stqdm
+datasets
+mecab-python3
+unidic-lite
+hojichar
+streamlit_shortcuts
